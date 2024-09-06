@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, CircularProgress, Snackbar } from '@mui/material';
+import { Container, Typography, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, CircularProgress, Snackbar, useMediaQuery, useTheme, Grid } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { backend } from 'declarations/backend';
 
@@ -23,6 +23,8 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const { control, handleSubmit, reset } = useForm<FormData>();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchRequests();
@@ -85,66 +87,76 @@ const App: React.FC = () => {
         Signature Tracker
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="name"
-          control={control}
-          defaultValue=""
-          rules={{ required: 'Name is required' }}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              label="Name"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              error={!!error}
-              helperText={error?.message}
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Controller
+              name="name"
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Name is required' }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Name"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  error={!!error}
+                  helperText={error?.message}
+                />
+              )}
             />
-          )}
-        />
-        <Controller
-          name="notes"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Notes"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              multiline
-              rows={3}
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              name="notes"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Notes"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  multiline
+                  rows={3}
+                />
+              )}
             />
-          )}
-        />
-        <Controller
-          name="link"
-          control={control}
-          defaultValue=""
-          rules={{ required: 'Link is required' }}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              label="Link"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              error={!!error}
-              helperText={error?.message}
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              name="link"
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Link is required' }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Link"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  error={!!error}
+                  helperText={error?.message}
+                />
+              )}
             />
-          )}
-        />
-        <Button type="submit" variant="contained" color="primary" disabled={loading}>
-          {loading ? <CircularProgress size={24} /> : 'Add Request'}
-        </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary" disabled={loading} fullWidth>
+              {loading ? <CircularProgress size={24} /> : 'Add Request'}
+            </Button>
+          </Grid>
+        </Grid>
       </form>
-      <TableContainer component={Paper} sx={{ mt: 4 }}>
+      <TableContainer component={Paper} sx={{ mt: 4, overflowX: 'auto' }}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Notes</TableCell>
+              {!isMobile && <TableCell>Notes</TableCell>}
               <TableCell>Link</TableCell>
               <TableCell>Days Pending</TableCell>
               <TableCell>Signed</TableCell>
@@ -154,10 +166,10 @@ const App: React.FC = () => {
             {requests.map((request) => (
               <TableRow key={request.id.toString()}>
                 <TableCell>{request.name}</TableCell>
-                <TableCell>{request.notes}</TableCell>
+                {!isMobile && <TableCell>{request.notes}</TableCell>}
                 <TableCell>
                   <a href={request.link} target="_blank" rel="noopener noreferrer">
-                    {request.link}
+                    {isMobile ? 'Link' : request.link}
                   </a>
                 </TableCell>
                 <TableCell>

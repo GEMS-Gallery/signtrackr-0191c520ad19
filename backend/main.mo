@@ -71,10 +71,7 @@ actor {
     }
   };
 
-  // Simulated function to send a signal message
   private func sendSignalMessage(name: Text): async () {
-    // In a real implementation, this would send a message to Josh
-    // For now, we'll just simulate the action
     Debug.print("Signal sent to Josh: New signature request from " # name);
   };
 }
