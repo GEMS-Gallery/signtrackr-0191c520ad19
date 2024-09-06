@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, CircularProgress } from '@mui/material';
+import { Container, Typography, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, CircularProgress, Snackbar } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { backend } from 'declarations/backend';
 
@@ -21,6 +21,7 @@ type FormData = {
 const App: React.FC = () => {
   const [requests, setRequests] = useState<SignatureRequest[]>([]);
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
   const { control, handleSubmit, reset } = useForm<FormData>();
 
   useEffect(() => {
@@ -43,11 +44,14 @@ const App: React.FC = () => {
       if ('ok' in result) {
         await fetchRequests();
         reset();
+        setNotification(`New signature request added and signal sent to Josh for: ${data.name}`);
       } else {
         console.error('Error adding request:', result.err);
+        setNotification(`Error adding request: ${result.err}`);
       }
     } catch (error) {
       console.error('Error adding request:', error);
+      setNotification(`Error adding request: ${error}`);
     }
     setLoading(false);
   };
@@ -60,9 +64,11 @@ const App: React.FC = () => {
         await fetchRequests();
       } else {
         console.error('Error updating signature status:', result.err);
+        setNotification(`Error updating signature status: ${result.err}`);
       }
     } catch (error) {
       console.error('Error updating signature status:', error);
+      setNotification(`Error updating signature status: ${error}`);
     }
     setLoading(false);
   };
@@ -169,6 +175,12 @@ const App: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+        open={!!notification}
+        autoHideDuration={6000}
+        onClose={() => setNotification(null)}
+        message={notification}
+      />
     </Container>
   );
 };
