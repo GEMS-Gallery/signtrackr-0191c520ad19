@@ -1,0 +1,25 @@
+type Time = int;
+type SignatureRequest = 
+ record {
+   createdAt: Time;
+   id: nat;
+   link: text;
+   name: text;
+   notes: opt text;
+   signed: bool;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: nat;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+service : {
+  addSignatureRequest: (text, opt text, text) -> (Result_1);
+  getSignatureRequests: () -> (vec SignatureRequest) query;
+  updateSignatureStatus: (nat, bool) -> (Result);
+}
